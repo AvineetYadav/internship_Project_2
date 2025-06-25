@@ -7,7 +7,6 @@ import {
   DialogActions,
   Button,
   TextField,
-  Box,
   Grid,
 } from '@mui/material';
 import { useState } from 'react';
@@ -34,8 +33,13 @@ interface FormData {
 export default function AddRowDialog({ open, onClose }: AddRowDialogProps) {
   const dispatch = useAppDispatch();
   const { columns } = useAppSelector((state) => state.table);
-  
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
     defaultValues: {
       name: '',
       email: '',
@@ -51,7 +55,7 @@ export default function AddRowDialog({ open, onClose }: AddRowDialogProps) {
       id: Math.random().toString(36).substr(2, 9),
       ...data,
     };
-    
+
     dispatch(addRow(newRow));
     reset();
     onClose();
@@ -62,7 +66,7 @@ export default function AddRowDialog({ open, onClose }: AddRowDialogProps) {
     onClose();
   };
 
-  const editableColumns = columns.filter(col => col.editable);
+  const editableColumns = columns.filter((col) => col.editable);
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -73,14 +77,17 @@ export default function AddRowDialog({ open, onClose }: AddRowDialogProps) {
             {editableColumns.map((column) => (
               <Grid item xs={12} sm={6} key={column.id}>
                 <Controller
-                  name={column.id as keyof FormData}
+                  name={column.id}
                   control={control}
                   rules={{
                     required: column.required ? `${column.label} is required` : false,
-                    pattern: column.type === 'email' ? {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: 'Please enter a valid email',
-                    } : undefined,
+                    pattern:
+                      column.type === 'email'
+                        ? {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: 'Please enter a valid email',
+                          }
+                        : undefined,
                   }}
                   render={({ field }) => (
                     <TextField
@@ -88,8 +95,10 @@ export default function AddRowDialog({ open, onClose }: AddRowDialogProps) {
                       label={column.label}
                       type={column.type === 'number' ? 'number' : 'text'}
                       fullWidth
-                      error={!!errors[column.id as keyof FormData]}
-                      helperText={errors[column.id as keyof FormData]?.message}
+                      error={!!errors[column.id]}
+                      helperText={
+                        (errors[column.id] as { message?: string })?.message
+                      }
                       InputProps={{
                         inputProps: column.type === 'number' ? { min: 0 } : {},
                       }}
