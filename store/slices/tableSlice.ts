@@ -69,7 +69,7 @@ const tableSlice = createSlice({
     },
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
-      state.currentPage = 0; // Reset to first page when searching
+      state.currentPage = 0;
     },
     setSorting: (state, action: PayloadAction<{ field: string; direction: 'asc' | 'desc' }>) => {
       state.sortField = action.payload.field;
@@ -80,14 +80,15 @@ const tableSlice = createSlice({
     },
     setRowsPerPage: (state, action: PayloadAction<number>) => {
       state.rowsPerPage = action.payload;
-      state.currentPage = 0; // Reset to first page when changing page size
+      state.currentPage = 0;
     },
     setEditingRows: (state, action: PayloadAction<Set<string>>) => {
-      // Redux Toolkit uses Immer, so we need to convert Set to Array for serialization
       state.editingRows = action.payload;
     },
     startEditing: (state, action: PayloadAction<string>) => {
-      state.editingRows = new Set([...state.editingRows, action.payload]);
+      const arr = Array.from(state.editingRows);
+      arr.push(action.payload);
+      state.editingRows = new Set(arr);
     },
     stopEditing: (state, action: PayloadAction<string>) => {
       const newSet = new Set(state.editingRows);
