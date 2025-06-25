@@ -15,7 +15,7 @@
 # production
 /build
 
-/.bolt
+.bolt/
 
 # misc
 .DS_Store
